@@ -36,14 +36,23 @@
 // ===========================
 // Enter your WiFi credentials
 // ===========================
-const char *ssid = "Henson Lee iPhone";
-const char *password = "asdf1234";
-//const char *ssid = "Extender";
-//const char *password = "jnymktg2000";
+//const char *ssid = "Henson Lee iPhone";
+//const char *password = "asdf1234";
+const char *ssid = "Extender";
+const char *password = "jnymktg2000";
+
+//led pin
+const int ledPin = 32;
+const int ldrPin = 33;
+//#define LIGHT_SENSOR_PIN 33
+
 
 
 void startCameraServer();
 void setupLedFlash(int pin);
+
+
+
 
 void setup() {
   Serial.begin(115200);
@@ -77,6 +86,10 @@ void setup() {
   config.fb_location = CAMERA_FB_IN_PSRAM;
   config.jpeg_quality = 12;
   config.fb_count = 1;
+
+  //led
+  pinMode (ledPin, OUTPUT);
+  analogSetAttenuation(ADC_11db);
 
   // if PSRAM IC present, init with UXGA resolution and higher JPEG quality
   //                      for larger pre-allocated frame buffer.
@@ -161,5 +174,18 @@ void setup() {
 
 void loop() {
   // Do nothing. Everything is done in another task by the web server
-  delay(10000);
+  digitalWrite (ledPin, LOW);
+  Serial.println("led off");
+  delay(500);
+  digitalWrite (ledPin, HIGH);
+  Serial.println("led on");
+
+  int analogValue = analogRead(33);
+  Serial.print("Analog Value = ");
+  Serial.print(analogValue);   // the raw analog reading
+
+
+
+  delay(500);
+   
 }
