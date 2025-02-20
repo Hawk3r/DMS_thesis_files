@@ -1,4 +1,4 @@
-Try.py is using mobilenet 
+Try.py is using mobilenet ssd
 1-10 fps
 head detection works (but feels like human detection)
 
