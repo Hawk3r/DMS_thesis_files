@@ -1,0 +1,30 @@
+2nd layer mac adr
+
+3rd lyer is ip addr
+
+
+
+network lyer checks if the data has gotten to itsd destination
+
+network layer info chnges after each hop
+
+ll it does is get data from one router to another until dest
+
+
+
+layer 4 transport: identidies which port data stream goes to
+identifies which port to pass thru
+transport is service to service
+src data and dest adr are sent with data to the port
+
+osi model last 3 layers - interchngeble
+
+
+
+lyer 5: session distinguishes between usr sessions: cookies n such
+
+
+lyer 6: how to interpret the data, distinguish between filesp
+
+lyer 7: appliction
+app commands
