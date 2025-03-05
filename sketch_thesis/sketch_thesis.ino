@@ -30,6 +30,7 @@
 //#define CAMERA_MODEL_ESP32S2_CAM_BOARD
 //#define CAMERA_MODEL_ESP32S3_CAM_LCD
 //#define CAMERA_MODEL_DFRobot_FireBeetle2_ESP32S3 // Has PSRAM
+
 //#define CAMERA_MODEL_DFRobot_Romeo_ESP32S3 // Has PSRAM
 #include "camera_pins.h"
 
@@ -38,15 +39,22 @@
 // ===========================
 //const char *ssid = "Henson Lee iPhone";
 //const char *password = "asdf1234";
-const char *ssid = "Extender";
-const char *password = "jnymktg2000";
+//const char *ssid = "Extender";
+//const char *password = "jnymktg2000";
+//const char *ssid = "extender 3";
+//const char *password = "Qwerty09&";
+//const char *ssid = "GlobeAtHome_65825_2.4";
+//const char *password = "vbv9Acqf";
+//const char *ssid = "Home 3";
+//const char *password  = "Bantot8280";
 
 //led pin
 const int ledPin = 32;
 const int ldrPin = 33;
 //#define LIGHT_SENSOR_PIN 33
 
-
+const char* ssid = "ESP32-CAM Access Point";
+const char* password = "123456789";
 
 void startCameraServer();
 void setupLedFlash(int pin);
@@ -153,17 +161,17 @@ void setup() {
 #if defined(LED_GPIO_NUM)
   setupLedFlash(LED_GPIO_NUM);
 #endif
+  //WiFi.begin(ssid, password);
+  //WiFi.setSleep(false);
 
-  WiFi.begin(ssid, password);
-  WiFi.setSleep(false);
-
-  Serial.print("WiFi connecting");
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
-  Serial.println("");
-  Serial.println("WiFi connected");
+  //Serial.print("WiFi connecting");
+  //while (WiFi.status() != WL_CONNECTED) {
+  //  delay(500);
+  //  Serial.print(".");
+  //}
+  WiFi.softAP(ssid, password);
+  //Serial.println("");
+  //Serial.println("WiFi connected");
 
   startCameraServer();
 
@@ -174,18 +182,21 @@ void setup() {
 
 void loop() {
   // Do nothing. Everything is done in another task by the web server
-  digitalWrite (ledPin, LOW);
-  Serial.println("led off");
+  
   delay(500);
-  digitalWrite (ledPin, HIGH);
-  Serial.println("led on");
+  
 
   int analogValue = analogRead(33);
-  Serial.print("Analog Value = ");
-  Serial.print(analogValue);   // the raw analog reading
+  //Serial.print("Analog Value = ");
+  //Serial.print(analogValue);   // the raw analog reading
 
+  if (analogValue < 1000) {
+    digitalWrite (ledPin, LOW);
+  //Serial.println("led off");
+  } else  {
+    digitalWrite (ledPin, HIGH);
+  //Serial.println("led on");
+  } 
 
-
-  delay(500);
    
 }
