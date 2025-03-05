@@ -1,0 +1,8 @@
+Try.py is using mobilenet ssd
+1-10 fps
+head detection works (but feels like human detection)
+
+
+try2 is using efficienet and yolo
+2-8 fps
+head detection works (but feels like human detection)
