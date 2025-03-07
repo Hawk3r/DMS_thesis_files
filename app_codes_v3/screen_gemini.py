@@ -18,6 +18,7 @@ from kivy.uix.textinput import TextInput
 from kivymd.uix.textfield import textfield
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.uix.slider import Slider
 
 import geocoder
 
@@ -28,7 +29,7 @@ import base64
 import speech_recognition as sr  # Speech recognition for voice input
 from google import genai
 from google.genai import types
-from kivy.app import App
+
 
 
 AWB = True
@@ -93,7 +94,7 @@ class MenuScreen(Screen):
     capture = cv2.VideoCapture()
     conversation = []
     activated = False  # Activation flag
-    api_key = "api"  # Replace with your actual API key # Hardcoded API Key for Testing
+    api_key = "api key"  # Replace with your actual API key # Hardcoded API Key for Testing
     client = genai.Client(api_key= api_key)# Initialize Gemini client
     timer = 0
 
