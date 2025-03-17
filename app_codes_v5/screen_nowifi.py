@@ -77,13 +77,6 @@ def detect_and_crop_face(frame):
     return None, None
 
 
-def get_current_gps_coordinates():
-    g = geocoder.ip('me')#this function is used to find the current information using our IP Add
-    if g.latlng is not None: #g.latlng tells if the coordiates are found or not
-        return g.latlng
-    else:
-        return None
-
 
 
 
@@ -95,15 +88,13 @@ class LoginScreen(Screen):
             self.manager.current = 'menu'
     
 class MenuScreen(Screen):
-
+    drowsCounter = 0
+    counter = 0
     capture = cv2.VideoCapture()
     conversation = []
     activated = False  # Activation flag
-    api_key = ""  # Replace with your actual API key # Hardcoded API Key for Testing
-    client = genai.Client(api_key= api_key)# Initialize Gemini client
+    
     timer = 0
-    drowsCounter = 0
-    counter = 0
 
     def start(self): 
         
@@ -167,84 +158,7 @@ class MenuScreen(Screen):
         self.image.texture = texture
         
 
-    def send_message(self):
-        """ Sends the spoken or typed message to the chatbot. """
-        text =  self.ids.user_input.text.strip()
-        
 
-        if not text:
-            return
-        
-        if not self.activated:
-            if text.lower() == "hello dms":
-                self.activated = True
-                self.conversation.append({"role": "user", "content": text})
-
-                # Stronger first message to enforce driver monitoring
-                system_instruction = ("You are the **Driver Monitoring Assistant (DMS)**. "
-                    "Your job is to **detect drowsiness, check driver alertness, and ensure road safety**. "
-                    "If the driver reports feeling tired, recommend stopping for rest or drinking coffee. "
-                    "Ask how long they have been driving and give advice based on their response. "
-                    "Keep responses **short and direct**.")
-
-                threading.Thread(target=self.call_gemini_api, args=(system_instruction,)).start()
-            else:
-                self.add_chat_message("DMS", "Please say 'Hello DMS' to activate the system.")
-        else:
-            self.conversation.append({"role": "user", "content": text})
-            threading.Thread(target=self.call_gemini_api, args=(text,)).start()
-
-    
-
-    def add_chat_message(self, sender, message):
-        msg = f"{sender}: {message}"
-
-        self.chatout.text = msg
-        
-    
-
-
-    def call_gemini_api(self, user_input):
-        """ Calls the Gemini API using the google.genai client. """
-        try:
-            modl = "gemini-2.0-flash"
-            contents = [
-                types.Content(
-                    role="user",
-                    parts=[
-                        types.Part.from_text(
-                            text="(IMPORTANT: Stay in role. You are the Driver Monitoring Assistant. "
-                                 "Do NOT talk about yourself. ONLY answer as a driver safety system.)\n\n"
-                                 + user_input
-                        ),
-                    ],
-                ),
-            ]
-            generate_content_config = types.GenerateContentConfig(
-                temperature=0.7,
-                top_p=0.9,
-                top_k=40,
-                max_output_tokens=500,
-                response_mime_type="text/plain",
-            )
-
-            response_text = ""
-
-            for chunk in self.client.models.generate_content_stream(
-                model=modl,
-                contents=contents,
-                config=generate_content_config,
-            ):
-                response_text += chunk.text
-
-            reply = response_text if response_text else "No response from Gemini."
-        except Exception as e:
-            reply = f"Exception: {e}"
-
-        self.conversation.append({"role": "model", "content": reply})
-        Clock.schedule_once(lambda dt: self.add_chat_message("DMS", reply))
-
-    
 
 class SettingsScreen(Screen):
     pass
