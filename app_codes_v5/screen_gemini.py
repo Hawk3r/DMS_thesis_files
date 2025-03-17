@@ -134,13 +134,18 @@ class MenuScreen(Screen):
 
                 if predicted_label == "focused":
                     counter = counter +1
+                    self.count1.text = str(counter)
                     if counter > 24:
                         drowsCounter = 0
+                        self.count2.text = str(drowsCounter)
+                        
 
 
-                elif (predicted_label == "focused"):
+                else:
                     drowsCounter = drowsCounter+1
+                    self.count2.text = str(drowsCounter)
                     counter = 0
+                    self.count1.text = str(counter)
                     if drowsCounter > 76:
                         self.testlabel.text ="DISTRACTED"
                 
