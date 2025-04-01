@@ -95,7 +95,7 @@ class MenuScreen(Screen):
     capture = cv2.VideoCapture()
     conversation = []
     activated = False  # Activation flag
-    api_key = ""  # Replace with your actual API key # Hardcoded API Key for Testing
+    api_key = "AIzaSyDU3X8MnBiFBvART6R9zMeyuL_UCHeLXTI"  # Replace with your actual API key # Hardcoded API Key for Testing
     client = genai.Client(api_key= api_key)# Initialize Gemini client
     timer = 0
     drowsCounter = 0
@@ -129,7 +129,7 @@ class MenuScreen(Screen):
             rgb_face = cv2.cvtColor(face, cv2.COLOR_BGR2RGB)
             pil_image = im.fromarray(rgb_face)
             input_tensor = transform(pil_image).unsqueeze(0).to(device)
-            self.distcounter = self.distcounter +1
+            
             
             # Inference
             with torch.no_grad():
@@ -145,12 +145,10 @@ class MenuScreen(Screen):
                 if predicted_label == "focused":
                     self.counter = self.counter +1           
                     if self.counter > 12:
-
                         self.gpslabel.text ="FOCUSED"
                         self.distcounter = 0
                         self.llmcounter = 0
                         self.drowsCounter = 0
-                        self.distcounter = 0
                         if self.counter >100:
                             self.counter =13
                 #drowsy       
@@ -167,16 +165,19 @@ class MenuScreen(Screen):
                 #distracted
                 else:
                     self.distcounter = self.distcounter +1
-                    if self.distcounter >30:
+                    if self.distcounter >60:
+                        self.counter = 0
                         self.gpslabel.text ="DISTRACTED"
                         if self.llmcounter == 0:
                             self.llmcounter = 1
-                            self.send_message()
+                            self.distracted_msg()
+                        if self.distcounter >60:
+                            self.distcounter = 61
                     
-    
+
                 self.count1.text = "counter " +str(self.counter)  
-                self.count2.text = "drwoscounter "+str(self.drowsCounter)
-                self.count3.text = "drwoscounter "+str(self.distcounter)
+                self.count2.text = "drowscounter "+str(self.drowsCounter)
+                self.count3.text = "distcounter "+str(self.distcounter)
                 
             self.label.text = str(self.timer)
             x, y, w, h = face_coords
@@ -184,14 +185,19 @@ class MenuScreen(Screen):
             cv2.putText(frame, f'{predicted_label} ({confidence:.2f})', (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 2)
         
         #distracted
+        
         else:
             self.distcounter = self.distcounter +1
-            if self.distcounter >30:
+            if self.distcounter >60:
+
+                self.counter = 0
                 self.gpslabel.text ="DISTRACTED"
                 if self.llmcounter == 0:
                     self.llmcounter = 1
-                    self.send_message()
-            self.count3.text = "drwoscounter "+str(self.distcounter)
+                    self.distracted_msg()
+                if self.distcounter >60:
+                    self.distcounter = 61
+            self.count3.text = "distcounter "+str(self.distcounter)
 
         self.image_frame = frame
         buffer= cv2.flip(frame, 0).tostring()
