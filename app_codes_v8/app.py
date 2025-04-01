@@ -100,6 +100,7 @@ class MenuScreen(Screen):
     timer = 0
     drowsCounter = 0
     counter = 0
+    distcounter = 0
     #engine = pyttsx3.init()
 
     instances_of_drowsiness = 0
@@ -108,9 +109,15 @@ class MenuScreen(Screen):
 
     def start(self): 
         self.capture = cv2.VideoCapture("http://192.168.4.1:81/stream")
-        #self.capture = cv2.VideoCapture(0)
         Clock.schedule_interval(self.loadVid , 1.0/24.0)
-        self.send_message()
+        system_instruction = ("You are the **Driver Monitoring Assistant (DMS)**. "
+                    "Your job is to **detect drowsiness, check driver alertness, and ensure road safety**. "
+                    "If the driver reports feeling tired, recommend stopping for rest or drinking coffee. "
+                    "Ask how long they have been driving and give advice based on their response. "
+                    "Keep responses ** very short and direct**.")
+
+        self.call_gemini_api(system_instruction)
+        #self.send_message()
 
     def loadVid(self,*args): 
         self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, 256)
@@ -122,7 +129,8 @@ class MenuScreen(Screen):
             rgb_face = cv2.cvtColor(face, cv2.COLOR_BGR2RGB)
             pil_image = im.fromarray(rgb_face)
             input_tensor = transform(pil_image).unsqueeze(0).to(device)
-
+            self.distcounter = self.distcounter +1
+            
             # Inference
             with torch.no_grad():
                 outputs = model(input_tensor)
@@ -133,40 +141,58 @@ class MenuScreen(Screen):
                 self.testlabel.text =predicted_label
 
 
-
+                #focused
                 if predicted_label == "focused":
-                    self.counter = self.counter +1
-                         
+                    self.counter = self.counter +1           
                     if self.counter > 12:
+
                         self.gpslabel.text ="FOCUSED"
+                        self.distcounter = 0
                         self.llmcounter = 0
                         self.drowsCounter = 0
+                        self.distcounter = 0
                         if self.counter >100:
                             self.counter =13
-                        
-                else:
+                #drowsy       
+                elif (predicted_label == "drowsy" )or (predicted_label == "sleepy") or ((predicted_label == "yawning")):
                     self.drowsCounter = self.drowsCounter+1
                     self.counter = 0
-                    
-                    
                     if self.drowsCounter > 30:
-                        self.gpslabel.text ="DISTRACTED"
+                        self.gpslabel.text ="SLEEPY"
                         if self.drowsCounter >100:
                             self.drowsCounter = 31
                         if self.llmcounter == 0:
                             self.llmcounter = 1
                             self.send_message()
-                            
-
+                #distracted
+                else:
+                    self.distcounter = self.distcounter +1
+                    if self.distcounter >30:
+                        self.gpslabel.text ="DISTRACTED"
+                        if self.llmcounter == 0:
+                            self.llmcounter = 1
+                            self.send_message()
+                    
+    
                 self.count1.text = "counter " +str(self.counter)  
                 self.count2.text = "drwoscounter "+str(self.drowsCounter)
+                self.count3.text = "drwoscounter "+str(self.distcounter)
                 
             self.label.text = str(self.timer)
             x, y, w, h = face_coords
             cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 255, 255), 2) 
             cv2.putText(frame, f'{predicted_label} ({confidence:.2f})', (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 2)
+        
+        #distracted
+        else:
+            self.distcounter = self.distcounter +1
+            if self.distcounter >30:
+                self.gpslabel.text ="DISTRACTED"
+                if self.llmcounter == 0:
+                    self.llmcounter = 1
+                    self.send_message()
+            self.count3.text = "drwoscounter "+str(self.distcounter)
 
-    
         self.image_frame = frame
         buffer= cv2.flip(frame, 0).tostring()
         texture = Texture.create(size = (frame.shape[1], frame.shape[0]),colorfmt = 'bgr')
@@ -183,13 +209,9 @@ class MenuScreen(Screen):
 
     def send_message(self):
         """ Sends the spoken or typed message to the chatbot. """
-        #text =  self.ids.user_input.text.strip()
         text = "im sleepy, please warn me"
-        
-
-        if not text:
-            return
-        
+        self.call_gemini_api(text)
+        """"
         if not self.activated:
             
             self.activated = True
@@ -201,12 +223,13 @@ class MenuScreen(Screen):
                     "Ask how long they have been driving and give advice based on their response. "
                     "Keep responses ** very short and direct**.")
 
-            self.call_gemini_api(system_instruction)
-            
+            self.call_gemini_api(system_instruction)  
         else:
-            self.call_gemini_api(text)
-
+            self.call_gemini_api(text)"""
     
+    def distracted_msg(self):
+        text = "im distracted, please warn me"
+        self.call_gemini_api(text)
 
     
 
