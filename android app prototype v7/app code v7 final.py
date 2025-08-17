@@ -148,7 +148,7 @@ class GpsTest(App):
     drows = StringProperty("drows")
     time = StringProperty("latency")
     finl = StringProperty("final status")
-    #bot = GeminiChatbot("AIzaSyDU3X8MnBiFBvART6R9zMeyuL_UCHeLXTI")
+    bot = GeminiChatbot("AIzaSyDU3X8MnBiFBvART6R9zMeyuL_UCHeLXTI")
     msg= False
     drowsCounter = 0
     counter = 0
@@ -183,11 +183,11 @@ class GpsTest(App):
         gps.stop()
 
     def dd(self):
-        #tts.speak(self.bot.send_message("You are the **Driver Monitoring Assistant (DMS)**. "
-          #          "Your job is to **detect drowsiness, check driver alertness, and ensure road safety**. "
-           #         "If the driver reports feeling tired, recommend stopping for rest or drinking coffee. "
-            #        "Ask how long they have been driving and give advice based on their response. "
-             #       "Keep responses ** short and direct**."))
+        tts.speak(self.bot.send_message("You are the **Driver Monitoring Assistant (DMS)**. "
+                    "Your job is to **detect drowsiness, check driver alertness, and ensure road safety**. "
+                    "If the driver reports feeling tired, recommend stopping for rest or drinking coffee. "
+                    "Ask how long they have been driving and give advice based on their response. "
+                    "Keep responses ** short and direct**."))
         self.capture = cv2.VideoCapture(0)
         Clock.schedule_interval(self.loadVid , 1)
 
@@ -214,7 +214,7 @@ class GpsTest(App):
 
     def loadVid(self, *args):
         start = time.time()
-        frame = url_to_image("http://192.168.4.1/capture")
+        frame = url_to_image("http://172.20.10.4/capture")
         if frame is not None:
 
             face, face_coords = detect_and_crop_face(frame)
@@ -249,7 +249,7 @@ class GpsTest(App):
                     if self.drowsCounter > self.drowsthresh:
                         self.finl ="SLEEPY"
                         if not self.msg:
-                            #tts.speak(self.bot.send_message("im sleepy"))
+                            tts.speak(self.bot.send_message("im sleepy"))
                             self.msg = True
                         if self.drowsCounter >50:
                             self.drowsCounter =  self.drowsthresh+ 1
@@ -263,7 +263,7 @@ class GpsTest(App):
                         self.counter = 0
                         self.finl ="DISTRACTED"
                         if self.distcounter >self.distthresh:
-                            tts.speak("You are distracted")
+                            tts.speak(self.bot.send_message("im using my phone"))
                         if self.llmcounter == 0:
                             self.llmcounter = self.distthresh+ 1
                         #if self.distcounter >10:
