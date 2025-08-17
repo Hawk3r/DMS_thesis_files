@@ -53,8 +53,12 @@ const int ledPin = 32;
 const int ldrPin = 33;
 //#define LIGHT_SENSOR_PIN 33
 
-const char* ssid = "ESP32-CAM Access Point";
-const char* password = "123456789";
+//const char* ssid = "ESP32-CAM Access Point";
+//const char* password = "123456789";
+
+const char* ssid     = "Henson Lee iPhone";   //input your wifi name
+const char* password = "asdf1234";   //input your wifi passwords
+
 
 void startCameraServer();
 void setupLedFlash(int pin);
@@ -161,17 +165,17 @@ void setup() {
 #if defined(LED_GPIO_NUM)
   setupLedFlash(LED_GPIO_NUM);
 #endif
-  //WiFi.begin(ssid, password);
-  //WiFi.setSleep(false);
+  WiFi.begin(ssid, password);
+  WiFi.setSleep(false);
 
-  //Serial.print("WiFi connecting");
-  //while (WiFi.status() != WL_CONNECTED) {
-  //  delay(500);
-  //  Serial.print(".");
-  //}
-  WiFi.softAP(ssid, password);
-  //Serial.println("");
-  //Serial.println("WiFi connected");
+  Serial.print("WiFi connecting");
+  while (WiFi.status() != WL_CONNECTED) {
+   delay(500);
+   Serial.print(".");
+  }
+  //WiFi.softAP(ssid, password);
+  Serial.println("");
+  Serial.println("WiFi connected");
 
   startCameraServer();
 
@@ -191,10 +195,10 @@ void loop() {
   //Serial.print(analogValue);   // the raw analog reading
 
   if (analogValue < 1000) {
-    digitalWrite (ledPin, LOW);
+    //digitalWrite (ledPin, LOW);
   //Serial.println("led off");
   } else  {
-    digitalWrite (ledPin, HIGH);
+    //digitalWrite (ledPin, HIGH);
   //Serial.println("led on");
   } 
 
