@@ -148,7 +148,7 @@ class GpsTest(App):
     drows = StringProperty("drows")
     time = StringProperty("latency")
     finl = StringProperty("final status")
-    #bot = GeminiChatbot("AIzaSyDU3X8MnBiFBvART6R9zMeyuL_UCHeLXTI")
+    #bot = GeminiChatbot("")
     msg= False
     drowsCounter = 0
     counter = 0
