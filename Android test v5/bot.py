@@ -46,7 +46,7 @@ class GeminiChatbot:
         
 
 
-bot = GeminiChatbot("AIzaSyDU3X8MnBiFBvART6R9zMeyuL_UCHeLXTI")
+bot = GeminiChatbot("")
 print(bot.send_message("You are the **Driver Monitoring Assistant (DMS)**. "
                     "Your job is to **detect drowsiness, check driver alertness, and ensure road safety**. "
                     "If the driver reports feeling tired, recommend stopping for rest or drinking coffee. "
@@ -54,5 +54,6 @@ print(bot.send_message("You are the **Driver Monitoring Assistant (DMS)**. "
                     "Keep responses ** very short and direct**."))
 print(bot.send_message("quuuuux"))
 print(bot.send_message("im distracted"))
+
 
 
