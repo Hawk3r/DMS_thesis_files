@@ -30,8 +30,9 @@ class GeminiClient:
             return f"Parsing error: {e}"
 
 
-client = GeminiClient("AIzaSyDU3X8MnBiFBvART6R9zMeyuL_UCHeLXTI")  # Replace with your actual Gemini API key
+client = GeminiClient("")  # Replace with your actual Gemini API key
 
 response = client.chat("can you act as a driver monitoring system, and if i say \"sleepy\" you automatically warn me of my sleepiness")
 response = client.chat("sleepy")
+
 print(response)
