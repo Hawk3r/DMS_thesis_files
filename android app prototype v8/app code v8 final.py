@@ -20,73 +20,112 @@ from urllib.request import urlopen
 import json
 
 kv = '''
-BoxLayout:
-    orientation: 'vertical'
+ScreenManager:
+    LoginScreen:
+    MainScreen:
 
-    Label:
-        text: app.gps_location
-
-    Label:
-        text: app.gps_status
-    
-    Label:
-        text: app.drows
-    
-    Label:
-        text: app.time
-    
+<LoginScreen>:
+    name: 'login'
     BoxLayout:
-        Label:
-            text: app.d1
-        Label:
-            text: app.d2
-        Label:
-            text: app.d3
-        Label:
-            text: app.finl
+        orientation: 'vertical'
+        Label: 
+            text: 'DMS system'
+        TextInput:
+            id: user
+            hint_text: 'Username'
+            multiline: False
 
-
-    BoxLayout:
-    Label: 
-        text: "drowsiness values"
-    Slider:
-        id: slider1
-        min: 2
-        max: 12
-        value: app.drowsthresh
-        step: 1
-        orientation: 'horizontal'
-        on_value: app.drowsthresh = int(self.value)
-        
-    Label: 
-        text: "distraction values"
-    Slider:
-        id: slider2
-        min: 2
-        max: 12
-        value: app.distthresh
-        step: 1
-        orientation: 'horizontal'
-        on_value: app.distthresh = int(self.value)
-            
-    
-    BoxLayout:
-        size_hint_y: None
-        height: '48dp'
-        padding: '4dp'
-
-        ToggleButton:
-            text: 'Start' if self.state == 'normal' else 'Stop'
-            on_state:
-                app.start(1000, 0) if self.state == 'down' else \
-                app.stop()
+        TextInput:
+            id: passw
+            hint_text: 'Password'
+            multiline: False
+            password: True
         Button:
-            text: 'monitor'
-            on_press: app.dd()
+            text: 'Login'
+            on_press:
+                app.login(user.text, passw.text)
+
+        Label:
+            id: stat
+            text: ''
+
+<MainScreen>:
+    name: 'main'
+    BoxLayout:
+        orientation: 'vertical'
+
+        Label:
+            text: app.gps_location
+
+        Label:
+            text: app.gps_status
+        
+        Label:
+            text: app.drows
+        
+        Label:
+            text: app.time
+        
+        BoxLayout:
+            Label:
+                text: app.d1
+            Label:
+                text: app.d2
+            Label:
+                text: app.d3
+            Label:
+                text: app.finl
+
+
+        BoxLayout:
+        Label: 
+            text: "drowsiness values"
+        Slider:
+            id: slider1
+            min: 2
+            max: 12
+            value: app.drowsthresh
+            step: 1
+            orientation: 'horizontal'
+            on_value: app.drowsthresh = int(self.value)
+            
+        Label: 
+            text: "distraction values"
+        Slider:
+            id: slider2
+            min: 2
+            max: 12
+            value: app.distthresh
+            step: 1
+            orientation: 'horizontal'
+            on_value: app.distthresh = int(self.value)
+                
+        
+        BoxLayout:
+            size_hint_y: None
+            height: '48dp'
+            padding: '4dp'
+
+            ToggleButton:
+                text: 'Start' if self.state == 'normal' else 'Stop'
+                on_state:
+                    app.start(1000, 0) if self.state == 'down' else \
+                    app.stop()
+            Button:
+                text: 'monitor'
+                on_press: app.dd()
 
     
     
 '''
+class LoginScreen(Screen):
+    pass
+
+class MainScreen(Screen):
+    pass
+
+
+
 
 model6 = "DMS_mobilevitv2_100.pt"
 AWB = True
@@ -172,7 +211,7 @@ class GpsTest(App):
     finl = StringProperty("final status")
 
 
-    bot = GeminiChatbot("")
+    bot = GeminiChatbot("AIzaSyAsPpY38-_bDQL6g_3lwb0ySAgqOFyJY4M")
 
     msg= False
     counter = 0  #counts frames in focus
@@ -189,7 +228,12 @@ class GpsTest(App):
     d3 =StringProperty()
 
 
-    
+    def login(self, username, password):
+        if username == "aaa" and password == "111":
+            self.root.current = 'main'
+        else:
+            login = self.root.get_screen('login')
+            login.ids.stat.text = "wrong password"
 
     def build(self):
         try:
