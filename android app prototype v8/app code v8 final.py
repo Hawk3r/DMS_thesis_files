@@ -211,7 +211,7 @@ class GpsTest(App):
     finl = StringProperty("final status")
 
 
-    bot = GeminiChatbot("AIzaSyAsPpY38-_bDQL6g_3lwb0ySAgqOFyJY4M")
+    bot = GeminiChatbot("")
 
     msg= False
     counter = 0  #counts frames in focus
@@ -342,3 +342,4 @@ class GpsTest(App):
 
 if __name__ == '__main__':
     GpsTest().run()
+
