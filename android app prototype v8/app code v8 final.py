@@ -276,17 +276,21 @@ class GpsTest(App):
                     "If the driver reports feeling tired, recommend stopping for rest or drinking coffee. "
                     "Ask how long they have been driving and give advice based on their response. "
                     "Keep responses ** short and direct**."))
-        Clock.schedule_interval(self.loadVid , 0.5)
+        #self.monitor = Clock.schedule_interval(self.loadVid , 0.5)
+        Clock.unschedule(self.loadVid)
+        Clock.schedule_interval(self.loadVid, 1/12)
 
     def loadVid(self, *args):
-        start = time.time()
+        
         try:
-            frame = url_to_image("http://192.168.0.110/capture")
+            frame = url_to_image("http://192.168.50.240/capture")         
         except  Exception as e:
             self.finl ="error cannot find camera"
-            return
+            Clock.unschedule(self.loadVid)
+            return 
+        start = time.time()
         if frame is not None:
-            face, face_coords = detect_and_crop_face(frame)
+            face, face_coords = detect_and_crop_face(frame) 
 
         if face is not None:
             rgb_face = cv2.cvtColor(face, cv2.COLOR_BGR2RGB)
@@ -308,6 +312,7 @@ class GpsTest(App):
                         self.distcounter = 0
                         self.drowsCounter = 0
                         self.counter =self.counter%20
+                        self.msg = False
                 
                 #drowsy       
                 elif (predicted_label == "drowsy" ) or (predicted_label == "yawning"):
@@ -323,8 +328,8 @@ class GpsTest(App):
                 #distracted
                 else:
                     self.distcounter = self.distcounter +1
+                    self.counter = 0
                     if self.distcounter >self.distthresh:
-                        self.counter = 0
                         self.finl ="DISTRACTED"
                         if not self.msg:
                             tts.speak(self.bot.send_message("im using my phone"))
@@ -336,10 +341,9 @@ class GpsTest(App):
         self.time = str(end - start)
         self.d1 = "counter: " +str(self.counter)  
         self.d2 = "drowscounter: "+str(self.drowsCounter)
-        self.d3 = "distcounter: "+str(self.distthresh)
+        self.d3 = "distcounter: "+str(self.distcounter)
         
 
 
 if __name__ == '__main__':
     GpsTest().run()
-
